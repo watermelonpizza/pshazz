@@ -1,0 +1,55 @@
+{
+    "plugins": ["git", "ssh", "title", "z", "aliases", "dircolors"],
+    "dircolors": {
+        "dirs": [[".*", "gray", ""]],
+        "files": [
+            ["(?ix).(7z|zip|tar|gz|rar)$", "darkcyan", ""],
+            ["(?ix).(exe|bat|cmd|py|pl|ps1|psm1|vbs|rb|reg|css)$", "darkgreen", ""],
+            ["(?ix).(doc|docx|ppt|pptx|xls|xlsx|mdb|mdf|ldf)$", "magenta", ""],
+            ["(?ix).(txt|cfg|conf|config|yml|ini|csv|log|json)$", "darkyellow", ""],
+            ["(?ix).(php)$", "darkmagenta", ""],
+            ["(?ix).(js)$", "darkblue", ""],
+            ["(?ix).(sln|csproj|sqlproj|proj|targets|html)$", "darkred", ""],
+            [".*", "darkgray", ""]
+        ]
+    },
+    "prompt": [
+        [
+            "",
+            "",
+            "$($global:g=$git_branch.Length; If($global:g) { $global:path_git_root=((git rev-parse --show-toplevel) -replace '/','\\'); $path_real=($path -replace '^~',$home); $global:path_git_rest=($path_real -replace ('^'+[Regex]::Escape($global:path_git_root)),'') -replace '^\\\\',''; $global:path_git_root_split=($global:path_git_root -replace '\\\\([^\\\\]+)$','|$1').Split('|'); })"
+        ],
+        [
+            "yellow",
+            "",
+            "`n$(if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {$([char]0x26A1) + ' ' } Else {''} )"
+        ],
+        ["blue", "", "$user"],
+        ["white", "", " in"],
+        [
+            "green",
+            "",
+            " $( If($global:g) { ($global:path_git_root_split[0] -replace '\\\\([^\\\\])[^\\\\]+','\\$1') + '\\' + $global:path_git_root_split[1] } Else { $path } )"
+        ],
+        ["magenta", "", "$(if ($git_branch) {'  '})"],
+        ["magenta", "", "$git_branch"],
+        ["red", "", "$(if ($git_branch) {' [' + $git_local_state + $git_remote_state + ']' })"],
+        ["white", "", "$(If($global:g -and $global:path_git_rest.Length) { ' ' + $global:path_git_rest })"],
+        [
+            "green",
+            "",
+            "$(Get-CimInstance -ClassName win32_battery | % { ' 🔋' + $(if($_.BatteryStatus -eq 2){ '⇡' } Else { '⇣' }) + $_.EstimatedChargeRemaining })"
+        ],
+        ["magenta", "", "`n`$"]
+    ],
+    "title": "$user@$hostname | $path",
+    "git": {
+        "prompt_unstaged": "!",
+        "prompt_staged": "+",
+        "prompt_stash": "$",
+        "prompt_untracked": "?",
+        "prompt_remote_push": "⇡",
+        "prompt_remote_pull": "⇣",
+        "prompt_remote_same": "="
+    }
+}
